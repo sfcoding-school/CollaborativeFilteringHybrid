@@ -1,12 +1,13 @@
 import json
 
-dbBussiness = []
+dbBussiness = {"bss_id": []}
 howmany = 0
 for line in open('yelp_academic_dataset_business.json', 'r'):
+   
     howmany += 1
     var = json.loads(line)
     if "Restaurants" in var["categories"]:
-        dbBussiness.append(line)
+        dbBussiness["bss_id"].append(var["business_id"])
 print "done"
 
 # dbBussinessNew = []
