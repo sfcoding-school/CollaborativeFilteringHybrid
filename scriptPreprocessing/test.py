@@ -88,6 +88,7 @@ def pearson(x, y, mean_x, mean_y):
 #         break
 
 f = open("dataset/similarityMatrix0.json", 'ab')
+chiHoGiaFatto = open("chiHoGiaFatto.json", 'ab')
 
 similarityMatrix = []
 quelloAttuale = {}
@@ -99,7 +100,7 @@ who_2 = None
 i = j = k = z = 0
 while True:
     try:
-        with open('dataset/reviewUserRistoranti/reviewUserRistorantiNew' + str(i) + '.json') as data_file:
+        with open('dataset/reviewUserRistoranti/reviewUserRistorantiNew10_' + str(i) + '.json') as data_file:
             file_temp = json.load(data_file)
             for who_1 in file_temp:  # O(n^2 - n)
                 if miServivaUnBooleano is True:
@@ -121,13 +122,14 @@ while True:
     except Exception, err:
         print j
         f.write(json.dumps({"u": who_2, "m_s": similForJustOneUser}) + "\n")
-        if z == 5000:
+        if z == 500:
             z = 0
             f.close()
             k += 1
             f = open("dataset/similarityMatrix" + str(k) + ".json", 'ab')
 
         similarityMatrix.append(who_2)
+        chiHoGiaFatto.write(str(who_2))
         i = 0
         quelloAttuale = {}
         similForJustOneUser = []
