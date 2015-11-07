@@ -6,12 +6,12 @@ import math
 
 
 # cosine similarity
-def cosine_similarity(x, y, listaComune):
+def cosine_similarity(listaComune):
     sumxx = sumxy = sumyy = 0
 
     for i in range(len(listaComune)):
-        temp1 = x[i]
-        temp2 = y[i]
+        temp1 = listaComune[i][0]
+        temp2 = listaComune[i][1]
         sumxx += temp1*temp1
         sumyy += temp2*temp2
         sumxy += temp1*temp2

@@ -5,7 +5,7 @@ import os
 # ------------------------------------
 
 from utility.creazioneTestSet import calcoloTestSet
-from utility.calcMatrixSimilarity import calcMatrixSimilarity
+from utility.calcMatrixSimilarity import calcMatrixSimilarityUser, calcMatrixSimilarityItem
 from utility.calcRatingPrediction import calcRatingPrediction
 
 numeroReviewDaControllare = 100
@@ -24,10 +24,11 @@ if not faseFinale:
 
     quantiNelTestSet, listaUtentiTestSet, numeroUtentiRispettoReview = calcoloTestSet(filename, percentualeTestSet, numeroReviewDaControllare, quanteReviewVoglioTogliere)
 
-    calcMatrixSimilarity(filename, listaUtentiTestSet, numeroAmici, quantiNelTestSet)
+    # calcMatrixSimilarityUser(filename, listaUtentiTestSet, numeroAmici, quantiNelTestSet)
+    calcMatrixSimilarityItem(filename, listaUtentiTestSet, numeroAmici, quantiNelTestSet)
 
 if ratingPrediction:
-    calcRatingPrediction(filename, True)
+    calcRatingPrediction(filename, False)
 
     # # Scrittura Report
     # print "Scrittura Report ..."

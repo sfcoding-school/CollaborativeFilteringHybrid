@@ -70,8 +70,11 @@ def calcRatingPrediction(filename, userBased):
                             except Exception, e:
                                 pass  # non tutti il mio vicinato potrebbe aver recensito il mio stesso ristorante
 
-    RMSE = math.sqrt(1.0/counterLine*RMSE)
-    MAE = 1.0/counterLine*MAE
+    try:
+        RMSE = math.sqrt(1.0/counterLine*RMSE)
+        MAE = 1.0/counterLine*MAE
+    except ZeroDivisionError:
+        print "ZeroDivisionError"
     # an MAE of 0.7 means that the algorithm, on average, was off by 0.7 stars
     sol = '\nRMSE = ' + str(RMSE) + ' NRMSE = ' + str(RMSE/(5-1)) + ' MAE = ' + str(MAE) + ' NMAE = ' + str(MAE/(5-1))
     print sol
