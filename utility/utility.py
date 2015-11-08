@@ -7,6 +7,8 @@ import math
 
 # cosine similarity
 def cosine_similarity(listaComune):
+    print listaComune
+    print listaComune[0][0], listaComune[0][1]
     sumxx = sumxy = sumyy = 0
 
     for i in range(len(listaComune)):

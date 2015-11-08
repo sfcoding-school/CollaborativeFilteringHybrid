@@ -67,27 +67,38 @@ def calcMatrixSimilarityUser(filename, listaUtentiTestSet, numeroAmici, quantiNe
 def calcMatrixSimilarityItem(filename, listaUtentiTestSet, numeroAmici, quantiNelTestSet):
     f = open(filename + "/similarityMatrixItemBased0.json", 'ab')
 
-    with open('dataset/dataset/bussinessRestaurant.json') as data_file:
-        # {"quanti":61184, "bss_id": ["mVHrayjG3uZ_RLHkLj-AMg", ... ]}
-        listaRistoranti = json.load(data_file)["bss_id"]
+    listaRistoranti = set()
+    for lineTestSet in open(filename + '/testSet.json', 'r'):
+        utenteAttualeTestSet = json.loads(lineTestSet)
+        idUtenteAttuale = [key for key in utenteAttualeTestSet if key != 'keyRem'][0]
+        listaRistoranti |= set(utenteAttualeTestSet[idUtenteAttuale]["review"].keys())
+
+    lenListaRistoranti = len(listaRistoranti)
+    listaRistoranti = list(listaRistoranti)
+
+    contents = open(filename + '/testSet.json', 'r').read()
+    testSetUnito = [json.loads(str(item)) for item in contents.strip().split('\n')]
 
     i = 0
     for ristorante1 in listaRistoranti:
-        sys.stdout.write("\rn. %s  " % i)
+        sys.stdout.write("\rn. %s  " % str(lenListaRistoranti - i))
         sys.stdout.flush()
         i += 1
         listaMieiSimili = []
         for ristorante2 in listaRistoranti:
             if ristorante1 != ristorante2:
                 listaComune = []
-                for lineTestSet in open(filename + '/testSet.json', 'r'):
-                    utenteAttualeTestSet = json.loads(lineTestSet)
-                    idUtenteAttuale = [key for key in utenteAttualeTestSet if key != 'keyRem'][0]
+
+                for utente in testSetUnito:
+                    idUtenteAttuale = [key for key in testSetUnito if key != 'keyRem'][0]
 
                     voto1 = voto2 = 0
                     try:
                         voto1 = utenteAttualeTestSet[idUtenteAttuale]["review"][ristorante1]
                         voto2 = utenteAttualeTestSet[idUtenteAttuale]["review"][ristorante2]
+                        print "--------------------------------\n", idUtenteAttuale, ristorante1, ristorante2
+                        print utenteAttualeTestSet[idUtenteAttuale]["review"]
+                        print "--------------------------------\n"
                         listaComune.append((voto1, voto2))
                     except Exception:
                         pass

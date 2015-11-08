@@ -9,7 +9,7 @@ from utility.calcMatrixSimilarity import calcMatrixSimilarityUser, calcMatrixSim
 from utility.calcRatingPrediction import calcRatingPrediction
 
 numeroReviewDaControllare = 100
-percentualeTestSet = 0.9
+percentualeTestSet = 0.7
 numeroAmici = 10  # mettere a None per non avere un minimo
 faseFinale = False
 filename = None  # "dataset/test/20151106072709"  # se faseFinale=True => bisogna mettere cartella
