@@ -9,10 +9,10 @@ from utility.calcMatrixSimilarity import calcMatrixSimilarityUser, calcMatrixSim
 from utility.calcRatingPrediction import calcRatingPrediction
 
 numeroReviewDaControllare = 100
-percentualeTestSet = 0.7
+percentualeTestSet = 0.95
 numeroAmici = 10  # mettere a None per non avere un minimo
-faseFinale = False
-filename = None  # "dataset/test/20151106072709"  # se faseFinale=True => bisogna mettere cartella
+faseFinale = True
+filename = None if not faseFinale else "dataset/test/20151109145302"  # "dataset/test/20151109075839"  # se faseFinale=True => bisogna mettere cartella
 quanteReviewVoglioTogliere = 5
 ratingPrediction = True
 
@@ -24,10 +24,11 @@ if not faseFinale:
 
     quantiNelTestSet, listaUtentiTestSet, numeroUtentiRispettoReview = calcoloTestSet(filename, percentualeTestSet, numeroReviewDaControllare, quanteReviewVoglioTogliere)
 
-    # calcMatrixSimilarityUser(filename, listaUtentiTestSet, numeroAmici, quantiNelTestSet)
+    calcMatrixSimilarityUser(filename, listaUtentiTestSet, numeroAmici, quantiNelTestSet)
     calcMatrixSimilarityItem(filename, listaUtentiTestSet, numeroAmici, quantiNelTestSet)
 
 if ratingPrediction:
+    calcRatingPrediction(filename, True)
     calcRatingPrediction(filename, False)
 
     # # Scrittura Report
