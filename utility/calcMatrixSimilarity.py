@@ -81,24 +81,19 @@ def calcMatrixSimilarityItem(filename, listaUtentiTestSet, numeroAmici, quantiNe
 
     i = 0
     for ristorante1 in listaRistoranti:
-        sys.stdout.write("\rn. %s  " % str(lenListaRistoranti - i))
-        sys.stdout.flush()
         i += 1
+        sys.stdout.write("\rn. %s     " % str(lenListaRistoranti - i))
+        sys.stdout.flush()
         listaMieiSimili = []
         for ristorante2 in listaRistoranti:
             if ristorante1 != ristorante2:
                 listaComune = []
-
                 for utente in testSetUnito:
-                    idUtenteAttuale = [key for key in testSetUnito if key != 'keyRem'][0]
-
+                    idUtenteAttuale = [key for key in utente if key != 'keyRem'][0]
                     voto1 = voto2 = 0
                     try:
-                        voto1 = utenteAttualeTestSet[idUtenteAttuale]["review"][ristorante1]
-                        voto2 = utenteAttualeTestSet[idUtenteAttuale]["review"][ristorante2]
-                        print "--------------------------------\n", idUtenteAttuale, ristorante1, ristorante2
-                        print utenteAttualeTestSet[idUtenteAttuale]["review"]
-                        print "--------------------------------\n"
+                        voto1 = utente[idUtenteAttuale]["review"][ristorante1]
+                        voto2 = utente[idUtenteAttuale]["review"][ristorante2]
                         listaComune.append((voto1, voto2))
                     except Exception:
                         pass
