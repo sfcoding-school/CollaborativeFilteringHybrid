@@ -28,11 +28,14 @@ def mean(x):
 
 # calcolo la sample standard deviation
 def sampleStandardDeviation(x, mean_x, listaComune):
+    if len(listaComune)-1 is 0:
+        return 0
+
     sumv = 0.0
     for i in listaComune:
         sumv += (x[i] - mean_x)**2
     # return math.sqrt(sumv/(len(x)-1))
-    return math.sqrt(sumv/(len(x)-1)) if len(x)-1 is not 0 else 0
+    return math.sqrt(sumv/(len(listaComune)-1))
 
 
 # calcolo il PCC
@@ -65,7 +68,7 @@ def pearson(x, y, mean_x, mean_y):
     # using zip to iterate over two lists in parallel
     valoreDaRitornare = 0
     try:
-        valoreDaRitornare = (sum([i*j for i, j in zip(scorex, scorey)]))/(len(x)-1)
+        valoreDaRitornare = (sum([i*j for i, j in zip(scorex, scorey)]))/(len(listaTemp)-1)
     except Exception:
         pass
     return valoreDaRitornare
