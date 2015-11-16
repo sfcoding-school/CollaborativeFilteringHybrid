@@ -1,0 +1,62 @@
+percentualeTestSet: 95
+Ho caricato in memoria UserReview: 447
+Ho creato il testSet: 23 23
+Inizio a creare MatrixSimilarityUser    Finito
+Creata listaRistoranti: 2679
+Inizio a calcolare la matrice ItemBased Finito
+Inizio a calcolare rating prediction
+Finito
+
+alpha: 0
+
+RMSE: 0.960355 NRMSE: 0.240089 MAE: 0.716393 NMAE: 0.179098
+good: 0 bad: 115
+alpha: 0.2
+
+RMSE: 0.938327 NRMSE: 0.234582 MAE: 0.697268 NMAE: 0.174317
+good: 0 bad: 115
+alpha: 0.4
+
+RMSE: 0.950601 NRMSE: 0.23765 MAE: 0.722301 NMAE: 0.180575
+good: 1 bad: 114
+alpha: 0.6
+
+RMSE: 0.99591 NRMSE: 0.248977 MAE: 0.771471 NMAE: 0.192868
+good: 1 bad: 114
+alpha: 0.8
+
+RMSE: 1.07006 NRMSE: 0.267516 MAE: 0.836065 NMAE: 0.209016
+good: 2 bad: 113
+alpha: 1
+
+RMSE: 1.16758 NRMSE: 0.291896 MAE: 0.915393 NMAE: 0.228848
+good: 2 bad: 113
+--------------------------------------------------------------------
+percentualeTestSet: 90
+Ho caricato in memoria UserReview: 447
+Ho creato il testSet: 51 51
+Inizio a creare MatrixSimilarityUser    Finito
+Creata listaRistoranti: 5014
+Inizio a calcolare la matrice ItemBased Finito
+Inizio a calcolare rating prediction
+Finito
+
+alpha: 0
+RMSE: 0.924799 NRMSE: 0.2312 MAE: 0.714664 NMAE: 0.178666
+good: 0 bad: 250
+alpha: 0.2
+RMSE: 0.910798 NRMSE: 0.2277 MAE: 0.705202 NMAE: 0.1763
+good: 4 bad: 246
+alpha: 0.4
+RMSE: 0.926177 NRMSE: 0.231544 MAE: 0.720341 NMAE: 0.180085
+good: 2 bad: 248
+alpha: 0.6
+RMSE: 0.96954 NRMSE: 0.242385 MAE: 0.757214 NMAE: 0.189304
+good: 3 bad: 247
+alpha: 0.8
+RMSE: 1.03738 NRMSE: 0.259346 MAE: 0.809442 NMAE: 0.202361
+good: 2 bad: 248
+alpha: 1
+RMSE: 1.12529 NRMSE: 0.281322 MAE: 0.875501 NMAE: 0.218875
+good: 2 bad: 248
+-------------------------------------------------------------------
