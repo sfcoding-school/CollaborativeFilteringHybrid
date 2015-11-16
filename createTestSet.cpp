@@ -24,9 +24,14 @@ int myRandom(){
 void creazioneTestSet(std::unordered_map<std::string, std::unordered_map<std::string, double> > &vettoreUserReview,
                       std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
                       std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti,
-                      int percentualeTestSet) {
+                      int percentualeTestSet, int start) {
 
-    std::ifstream infile("reviewUserRistorantiCpp");
+  //puliscooooo
+  vettoreUserReview.clear();
+  testSet.clear();
+  tolti.clear();
+
+    std::ifstream infile("reviewUserRistorantiCpp50");
     std::string s;
     while (std::getline(infile, s))
     {
@@ -81,7 +86,7 @@ void creazioneTestSet(std::unordered_map<std::string, std::unordered_map<std::st
         int j = 0;
         for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
         {
-          if (j <= foldSize)
+          if (start * foldSize <= j && j <= (start+1) * foldSize)
           {
             // pusho su "vettoreReviewTolti"
             vettoreReviewTolti.insert({it2->first, it2->second});

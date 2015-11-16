@@ -92,5 +92,5 @@ void reccomender(std::unordered_map<std::string, std::unordered_map<std::string,
                bad += v2.size();
         }
      }
-     std::cout << "good: " << good << " bad: " << bad << std::endl;
+     std::cout << "good: " << good << " bad: " << bad << " " << ((double)100*good)/((double)good + bad) << std::endl;
 }
