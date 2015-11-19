@@ -1,4 +1,4 @@
-#include "vectorUtility.h"
+#include "reccomender.h"
 #include "matrixUser.h"
 #include <iostream>
 #include <vector>
@@ -57,7 +57,7 @@ double pearsonCorrelation(std::unordered_map<std::string, double> & reviewU_i, s
 void creazioneMatriceUser(std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
                           std::unordered_map<std::string, std::unordered_map<std::string, double> > &vettoreUserReview,
                           std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityUser){
-  std::cout << "Inizio a creare MatrixSimilarityUser";
+  
     
      for ( auto it = testSet.begin(); it != testSet.end(); ++it )
     {
@@ -75,7 +75,5 @@ void creazioneMatriceUser(std::unordered_map<std::string, std::unordered_map<std
       }
       matrixSimilarityUser.insert({it->first, vettoreMieiSimili});
     }
-
-    std::cout << "\tFinito\n";
     return;
 }

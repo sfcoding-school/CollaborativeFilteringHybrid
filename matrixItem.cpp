@@ -1,4 +1,4 @@
-#include "vectorUtility.h"
+#include "reccomender.h"
 #include <iostream>
 #include <vector>
 #include <tuple>
@@ -53,7 +53,6 @@ double calcoloSimilaritaItem(std::string rist_i, std::string rist_j, std::unorde
 void creazioneMatriceItem(std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
                           std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityItem,
                           std::set<std::string> &listaRistoranti){
-  std::cout << "Inizio a calcolare la matrice ItemBased";
 
     for(auto rist_i : listaRistoranti) {
       std::unordered_map<std::string, double> vettoreMieiSimili;
@@ -70,6 +69,4 @@ void creazioneMatriceItem(std::unordered_map<std::string, std::unordered_map<std
       }
       matrixSimilarityItem.insert({rist_i, vettoreMieiSimili});
     } 
-
-    std::cout << "\tFinito\n";
 }

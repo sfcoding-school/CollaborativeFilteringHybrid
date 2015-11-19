@@ -1,36 +1,62 @@
-#include "vectorUtility.h"
+#include "reccomender.h"
 #include <iostream>
 #include <vector>
 #include <tuple>
 #include <string>
+#include <fstream>
 #include <unordered_map>
 #include <algorithm>    // std::sort
 
-void reccomender(std::unordered_map<std::string, std::unordered_map<std::string, double> > &predizioniHybrid,
-                std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti
+double reccomender(std::unordered_map<std::string, std::unordered_map<std::string, double> > &predizioniHybrid,
+                std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti, std::ofstream &log
     ){
     std::unordered_map<std::string, std::vector<std::pair<std::string, double> > > iRaccomandati;
-    for ( auto it = predizioniHybrid.begin(); it != predizioniHybrid.end(); ++it )
+    if (true)
     {
-        std::vector<std::pair<std::string, double> > v;
-        for ( auto predizioni = (it->second).begin(); predizioni != (it->second).end(); ++predizioni )
-        {
-            v.push_back({predizioni->first, predizioni->second});
-            if (v.size() > 5)
+        //log << "reccomenderAlternativo!!!!!!!\n";
+       for ( auto it = predizioniHybrid.begin(); it != predizioniHybrid.end(); ++it )
+      {
+          std::vector<std::pair<std::string, double> > v;
+          for ( auto predizioni = (it->second).begin(); predizioni != (it->second).end(); ++predizioni )
+          {
+              v.push_back({predizioni->first, predizioni->second});
+          }
+          std::sort(v.begin(), v.end(), [](const std::pair<std::string, double>& lhs, const std::pair<std::string, double>& rhs) {
+                          return lhs.second < rhs.second; });
+          std::reverse(v.begin(), v.end());
+          std::vector<std::pair<std::string, double> > v2;
+          double max = v[0].second;
+          for (int i = 0; i < v.size(); ++i)
+          {
+            if ( v[i].second == max || i <= 5 )
             {
-                if (v.size() > 5)
-                {
-                    std::sort(v.begin(), v.end(), [](const std::pair<std::string, double>& lhs, const std::pair<std::string, double>& rhs) {
-                        return lhs.second < rhs.second; });
-                    std::reverse(v.begin(), v.end());
-                    //tolgo l'ultimo
-                    v.pop_back();
-                }
+              v2.push_back(v[i]);
             }
-        }
-        iRaccomandati.insert({it->first, v});
+          }
+          iRaccomandati.insert({it->first, v2});
+      }
+    } else {
+      for ( auto it = predizioniHybrid.begin(); it != predizioniHybrid.end(); ++it )
+      {
+          std::vector<std::pair<std::string, double> > v;
+          for ( auto predizioni = (it->second).begin(); predizioni != (it->second).end(); ++predizioni )
+          {
+              v.push_back({predizioni->first, predizioni->second});
+              if (v.size() > 5)
+              {
+                  if (v.size() > 5)
+                  {
+                      std::sort(v.begin(), v.end(), [](const std::pair<std::string, double>& lhs, const std::pair<std::string, double>& rhs) {
+                          return lhs.second < rhs.second; });
+                      std::reverse(v.begin(), v.end());
+                      //tolgo l'ultimo
+                      v.pop_back();
+                  }
+              }
+          }
+          iRaccomandati.insert({it->first, v});
+      }
     }
-
     std::unordered_map<std::string, std::vector<std::pair<std::string, int> > > iToltiDaControllare;
     for ( auto it = tolti.begin(); it != tolti.end(); ++it )
     {
@@ -92,5 +118,6 @@ void reccomender(std::unordered_map<std::string, std::unordered_map<std::string,
                bad += v2.size();
         }
      }
-     std::cout << "good: " << good << " bad: " << bad << " " << ((double)100*good)/((double)good + bad) << std::endl;
+     //log << "good: " << good << " bad: " << bad << " " << ((double)100*good)/((double)good + bad) << std::endl;
+     return ((double)100*good)/((double)good + bad);
 }
