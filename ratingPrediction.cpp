@@ -50,8 +50,7 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityUser,
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityItem,
-                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti,
-                             std::set<std::string> &listaRistoranti){
+                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti){
     
     for ( auto utenteNelTestSet = testSet.begin(); utenteNelTestSet != testSet.end(); ++utenteNelTestSet )
     {
@@ -59,23 +58,11 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
         std::unordered_map<std::string, double> predizioniItemBasedTemp;
         double media_u = calcolaMedia(utenteNelTestSet->second);
 
-          // tolgo i miei ristoranti
-        std::set<std::string> listaMieiRistoranti;
-        std::set<std::string> listaRistorantiDifference;
-        for ( auto ttt = (utenteNelTestSet->second).begin(); ttt != (utenteNelTestSet->second).end(); ++ttt )
-        {
-          listaMieiRistoranti.insert(ttt->first);
-        }
-
-        std::set_difference(listaRistoranti.begin(), listaRistoranti.end(), 
-                        listaMieiRistoranti.begin(), listaMieiRistoranti.end(), 
-                        std::inserter(listaRistorantiDifference, listaRistorantiDifference.begin()));
-
+        std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator doveSono = tolti.find (utenteNelTestSet->first);
         // ----- ----- ----- ------- ----- 
-        std::set<std::string>::iterator ristIt;
-        for (ristIt = std::begin(listaRistorantiDifference); ristIt != std::end(listaRistorantiDifference); ++ristIt)
+        for(auto cosoTolto = (doveSono->second).begin(); cosoTolto != (doveSono->second).end(); ++cosoTolto)
         {
-            std::string ristF = *ristIt;
+            std::string ristF = cosoTolto->first;
             //---- BLOCCO USERBASED
             double sopra = 0, sotto = 0;
             std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator got = matrixSimilarityUser.find (utenteNelTestSet->first);
@@ -175,20 +162,9 @@ void calcoloRatingPrediction2(std::unordered_map<std::string, std::unordered_map
         double media_u = calcolaMedia(utenteNelTestSet->second);
 
           // tolgo i miei ristoranti
-        std::set<std::string> listaMieiRistoranti;
-        std::set<std::string> listaRistorantiDifference;
-        for ( auto ttt = (utenteNelTestSet->second).begin(); ttt != (utenteNelTestSet->second).end(); ++ttt )
-        {
-          listaMieiRistoranti.insert(ttt->first);
-        }
-
-        std::set_difference(listaRistoranti.begin(), listaRistoranti.end(), 
-                        listaMieiRistoranti.begin(), listaMieiRistoranti.end(), 
-                        std::inserter(listaRistorantiDifference, listaRistorantiDifference.begin()));
-
+        std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator doveSono = tolti.find (utenteNelTestSet->first);
         // ----- ----- ----- ------- ----- 
-        std::set<std::string>::iterator ristIt;
-        for (ristIt = std::begin(listaRistorantiDifference); ristIt != std::end(listaRistorantiDifference); ++ristIt)
+        for(auto cosoTolto = (doveSono->second).begin(); cosoTolto != (doveSono->second).end(); ++cosoTolto)
         {
             std::string ristF = *ristIt;
             //---- BLOCCO USERBASED

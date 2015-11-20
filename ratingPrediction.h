@@ -6,8 +6,7 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityUser,
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityItem,
-                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti,
-                             std::set<std::string> &listaRistoranti
+                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti
     );
 
 void ratingPredictionHybrid(std::unordered_map<std::string, std::unordered_map<std::string, double> > &predizioniUser,
