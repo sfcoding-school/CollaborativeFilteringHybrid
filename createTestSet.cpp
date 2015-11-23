@@ -3,7 +3,6 @@
 #include "matrixUser.h"
 #include "matrixItem.h"
 #include "ratingPrediction.h"
-#include "cineseMethod.h"
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -16,67 +15,72 @@
 #include <math.h>  
 #include <iterator>
 
+// creazione e inizializzazione della funzione random
 std::default_random_engine generator;
-std::uniform_int_distribution<int> distribution(1,100);
-auto dice = std::bind ( distribution, generator );
-
+std::uniform_int_distribution<int> distribution(1, 100);
+auto dice = std::bind(distribution, generator);
 int myRandom(){
   return (dice()+dice()+dice())%100;
 }
 
-void loadFile(std::string who, std::unordered_map<std::string, std::unordered_map<std::string, double> > &vettoreUserReview){
-  std::ifstream infile(who); // reviewUserRistorantiCpp50
+// questa funzione deve semplicemente caricare il file contenente il dataset e fare il parsing, caricandolo in memoria
+//  sull'hashTable hashTableUserReview
+// il dataset deve essere del tipo:
+//  id_Utente;id_bussiness,voto_dato; ...
+// un utente per ogni riga
+void loadDataset(std::string who, std::unordered_map<std::string, std::unordered_map<std::string, double> > &hashTableUserReview){
+    std::ifstream infile(who);
     std::string s;
     while (std::getline(infile, s))
     {
-        std::istringstream ss( s );
-        std::unordered_map<std::string, double> vettoreIdReVoto;
+        std::istringstream ss(s);
+        std::unordered_map<std::string, double> hashTableIdB_voto;
         int booleanoIdUtente = 1;
         std::string idUt;
         while (!ss.eof())         
         {
-          std::string x;               
-          getline( ss, x, ';' );  
-          std::istringstream ss2( x );
+            std::string x;               
+            getline( ss, x, ';' );  
+            std::istringstream ss2( x );
+            if (booleanoIdUtente)
+            {
+                idUt = x;
+                booleanoIdUtente = 0;
+            } else {
 
-          if (booleanoIdUtente)
-          {
-              idUt = x;
-              booleanoIdUtente = 0;
-          } else {
-
-              std::string idRest;
-              int voto;
-              int booleanoVotoIdR = 0;
+                std::string idBussiness;
+                int voto;
+                int booleanoVotoIdR = 0;
                 while (!ss2.eof())         
                 {
-                  std::string x2;               
-                  getline( ss2, x2, ',' );  
-                  if (booleanoVotoIdR)
-                  {
-                      voto = atoi(x2.c_str());
-                      booleanoVotoIdR = 0;
-                  } else {
-                    idRest = x2;
-                    booleanoVotoIdR = 1;
-                  }
+                    std::string x2;               
+                    getline( ss2, x2, ',');  
+                    if (booleanoVotoIdR)
+                    {
+                        voto = atoi(x2.c_str());
+                        booleanoVotoIdR = 0;
+                    } else {
+                        idBussiness = x2;
+                        booleanoVotoIdR = 1;
+                    }
                 }
-                vettoreIdReVoto.insert({idRest, voto});
+                hashTableIdB_voto.insert({idBussiness, voto});
             }
         }
-        vettoreUserReview.insert({idUt, vettoreIdReVoto});
-        //std::cout << vettoreUserReview[0].first << " " << vettoreUserReview[0].second[0].first << " " << vettoreUserReview[0].second[0].second << "\n";    
+        hashTableUserReview.insert({idUt, hashTableIdB_voto});
     }
 }
 
-void odioTutti(std::unordered_map<std::string, std::unordered_map<std::string, double> > &vettoreUserReview,
+// reccomender system basato sulla rating prediction, verranno quindi calcolate prima tutte le predizioni e poi unite
+//  tramite formula: \alpha rU + (1 - alpha) rI
+void reccomenderRatingPredictionBased(std::unordered_map<std::string, std::unordered_map<std::string, double> > &hashTableUserReview,
                std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
                std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti,
                double A[], std::ofstream &log){
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityUser;
     log << "Inizio a creare MatrixSimilarityUser";
-    creazioneMatriceUser(testSet, vettoreUserReview, matrixSimilarityUser);
+    creazioneMatriceUser(testSet, hashTableUserReview, matrixSimilarityUser);
     log << "\tFinito\n";
 
     std::set<std::string> listaRistoranti;
@@ -104,24 +108,15 @@ void odioTutti(std::unordered_map<std::string, std::unordered_map<std::string, d
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUser;
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItem;
 
-    bool ratingPredictionBase = false;
-    if (ratingPredictionBase)
-    {
-      log << "Inizio a calcolare calcoloRatingPrediction1";
-      calcoloRatingPrediction(predizioniUser, predizioniItem, testSet, matrixSimilarityUser, 
-                              matrixSimilarityItem, tolti);
-      log << "\tFinito\n";
-    } else {
-      //double mu = overallAverageRating(vettoreUserReview);
-      log << "Inizio a calcolare calcoloRatingPrediction2";// (mu= " << mu << " )";
-      calcoloRatingPrediction2(predizioniUser, predizioniItem, testSet, matrixSimilarityUser, 
-                              matrixSimilarityItem, tolti, listaRistoranti, 0);
-      log << "\tFinito\n";
-    }
-    
+    // da settare localmente se si vuole usare la rating prediction user di tipo diverso
+    //  se a false utilizza quella con l'aggiunta della standard deviation
+    bool ratingPredictionBase = false; 
+    log << "Inizio a calcolare calcoloRatingPrediction";
+    calcoloRatingPrediction(predizioniUser, predizioniItem, testSet, matrixSimilarityUser, 
+                              matrixSimilarityItem, tolti, ratingPredictionBase);
+    log << "\tFinito\n";    
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybrid;
-
     for (double i = 0.0; i <= 1; i+=0.2)
     {
         log << "alpha: " << i;
@@ -132,173 +127,65 @@ void odioTutti(std::unordered_map<std::string, std::unordered_map<std::string, d
     }
 }
 
-void odioTuttiCinesi(std::unordered_map<std::string, std::unordered_map<std::string, double> > &vettoreUserReview,
+void testAlphaParametrico(std::unordered_map<std::string, std::unordered_map<std::string, double> > &hashTableUserReview,
                std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
                std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti,
                double A[], std::ofstream &log){
-      std::set<std::string> listaRistoranti;
-        for ( auto it = testSet.begin(); it != testSet.end(); ++it )
-        {
-            for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
-            {
-                listaRistoranti.insert(it2->first);
-            }
-        }
-        for ( auto it = tolti.begin(); it != tolti.end(); ++it )
-        {
-            for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
-            {
-                listaRistoranti.insert(it2->first);
-            }
-        }
-        log << "Creata listaRistoranti: " << listaRistoranti.size() << "\n";
 
-        std::unordered_map<std::string, std::tuple<double, double, double> > matriceVettoreCineseUser;
-        std::unordered_map<std::string, std::tuple<double, double, double> > matriceVettoreCineseItem;
-        creazioneVettoreCinese(testSet, matriceVettoreCineseUser, matriceVettoreCineseItem, listaRistoranti);
-        log << "Ho finito di calcolare matriceVettoreCineseUser\n";
-
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityUserCinese;
-        creazioneMatrixSimilarityCinese(matriceVettoreCineseUser, matrixSimilarityUserCinese);
-        log << "Ho finito di calcolare matrixSimilarityUserCinese\n";
-
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItemCinese;
-        creazioneMatrixSimilarityCinese(matriceVettoreCineseItem, matrixSimilarityItemCinese);
-        log << "Ho finito di calcolare matrixSimilarityItemCinese\n";
-
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUserCinese;
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItemCinese;
-        calcoloRatingPredictionCinese(predizioniUserCinese, testSet, matrixSimilarityUserCinese, 
-                                            matrixSimilarityItemCinese, predizioniItemCinese, tolti);
-        log << "Ho finito calcoloRatingPredictionCinese\n";
-
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybridCinese;
-
-        for (double i = 0.0; i <= 1; i+=0.2)
-        {
-            log << "alpha: " << i;
-            ratingPredictionHybrid(predizioniUserCinese, predizioniItemCinese, predizioniHybridCinese, i);
-            calcolaQuantoSeiAndatoMale(predizioniHybridCinese, tolti, log);
-            A[(int)(i*5)] += reccomender(predizioniHybridCinese, tolti, log);
-            predizioniHybridCinese.clear();
-        }
-}
-
-void stoCreandoUnMostroMezzoCinese(std::unordered_map<std::string, std::unordered_map<std::string, double> > &vettoreUserReview,
-               std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
-               std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti,
-
-               double A[], std::ofstream &log){
-
-  //------------------------------------------
-  std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityUser;
-    // log << "Inizio a creare MatrixSimilarityUser";
-    creazioneMatriceUser(testSet, vettoreUserReview, matrixSimilarityUser);
-    // log << "\tFinito\n";
+    std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityUser;
+    creazioneMatriceUser(testSet, hashTableUserReview, matrixSimilarityUser);
 
     std::set<std::string> listaRistoranti;
     for ( auto it = testSet.begin(); it != testSet.end(); ++it )
     {
-      for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
-      {
-        listaRistoranti.insert(it2->first);
-      }
+        for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
+        {
+            listaRistoranti.insert(it2->first);
+        }
     }
     for ( auto it = tolti.begin(); it != tolti.end(); ++it )
     {
-      for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
-      {
-        listaRistoranti.insert(it2->first);
-      }
+        for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
+        {
+            listaRistoranti.insert(it2->first);
+        }
     }
-    // log << "Creata listaRistoranti: " << listaRistoranti.size() << "\n";
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItem;
-    // log << "Inizio a creare MatrixSimilarityItem";
     creazioneMatriceItem(testSet, matrixSimilarityItem, listaRistoranti);
-    // log << "\tFinito\n";
-
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUser;
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItem;
 
     bool ratingPredictionBase = false;
-    if (ratingPredictionBase)
-    {
-      // log << "Inizio a calcolare calcoloRatingPrediction1";
-      calcoloRatingPrediction(predizioniUser, predizioniItem, testSet, matrixSimilarityUser, 
-                              matrixSimilarityItem, tolti);
-      // log << "\tFinito\n";
-    } else {
-      //double mu = overallAverageRating(vettoreUserReview);
-      // log << "Inizio a calcolare calcoloRatingPrediction2";// (mu= " << mu << " )";
-      calcoloRatingPrediction2(predizioniUser, predizioniItem, testSet, matrixSimilarityUser, 
-                              matrixSimilarityItem, tolti, listaRistoranti, 0);
-      // log << "\tFinito\n";
-    }
-    
+    calcoloRatingPrediction(predizioniUser, predizioniItem, testSet, matrixSimilarityUser, 
+    matrixSimilarityItem, tolti, ratingPredictionBase);
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybrid;
+    std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybridHybrid;
 
-    
-    
-  //------------------------------------------
+    double gamma = std::pow( 0.5 , ((double)testSet.size()/100)/10 );
 
-        std::unordered_map<std::string, std::tuple<double, double, double> > matriceVettoreCineseUser;
-        std::unordered_map<std::string, std::tuple<double, double, double> > matriceVettoreCineseItem;
-        creazioneVettoreCinese(testSet, matriceVettoreCineseUser, matriceVettoreCineseItem, listaRistoranti);
-        // log << "Ho finito di calcolare matriceVettoreCineseUser\n";
-
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityUserCinese;
-        creazioneMatrixSimilarityCinese(matriceVettoreCineseUser, matrixSimilarityUserCinese);
-        // log << "Ho finito di calcolare matrixSimilarityUserCinese\n";
-
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItemCinese;
-        creazioneMatrixSimilarityCinese(matriceVettoreCineseItem, matrixSimilarityItemCinese);
-        // log << "Ho finito di calcolare matrixSimilarityItemCinese\n";
-
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUserCinese;
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItemCinese;
-        calcoloRatingPredictionCinese(predizioniUserCinese, testSet, matrixSimilarityUserCinese, 
-                                            matrixSimilarityItemCinese, predizioniItemCinese, tolti);
-        // log << "Ho finito calcoloRatingPredictionCinese\n";
-
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybridCinese;
-        
-
-        //--------------------------------------------------------------
-        std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybridHybrid;
-
-        double alpha =((double)testSet.size()/100);
-        double gamma = std::pow( 0.5 , alpha/10 );
-
-        
-////////////////////////////////
-        predizioniHybrid.clear();
-        predizioniHybridCinese.clear();
-        predizioniHybridHybrid.clear();
-
-
-        ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, 1 - (gamma/10));
-        A[2] += reccomender(predizioniHybrid, tolti, log);
-
-       
+    ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, 1 - (gamma/10));
+    A[0] += reccomender(predizioniHybrid, tolti, log);    
 }
 
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
+// ////////////////////////////////////////////////////////////////////////////////////////////
+//  MAIN
+// ////////////////////////////////////////////////////////////////////////////////////////////
 
-void creazioneTestSet(std::string who, int percentualeTestSet, bool chineseMethod, std::ofstream &log) {
+void creazioneTestSet(std::string who, int percentualeTestSet, bool metodoAlphaGeom, std::ofstream &log) {
 
-    std::unordered_map<std::string, std::unordered_map<std::string, double> > vettoreUserReview;
+    std::unordered_map<std::string, std::unordered_map<std::string, double> > hashTableUserReview;
     std::unordered_map<std::string, std::unordered_map<std::string, double> > testSet;
     std::unordered_map<std::string, std::unordered_map<std::string, double> > tolti;
 
-    loadFile(who, vettoreUserReview);
-    log << "Ho caricato in memoria UserReview: " << vettoreUserReview.size() << "\n";
+    //carico il file e inizializzo hashTableUserReview
+    loadDataset(who, hashTableUserReview);
+    log << "Ho caricato in memoria UserReview: " << hashTableUserReview.size() << "\n";
 
+    // seleziono random il test set
     std::vector<std::string> tempScelti;
-
-    for ( auto it = vettoreUserReview.begin(); it != vettoreUserReview.end(); ++it )
+    for ( auto it = hashTableUserReview.begin(); it != hashTableUserReview.end(); ++it )
     {
        if (myRandom() > percentualeTestSet)
       {
@@ -306,6 +193,8 @@ void creazioneTestSet(std::string who, int percentualeTestSet, bool chineseMetho
       }
     }
     
+    // questo array mi serve per fare la media delle percentuali di TP nei vari fold
+    //  ha grandezza 6 poichè tento i vari \alpha da 0 a 1 con passo 0.2
     double A[6] = {0, 0, 0, 0, 0, 0};
 
     for (int foldAttuale = 0; foldAttuale < 5; ++foldAttuale)
@@ -313,47 +202,54 @@ void creazioneTestSet(std::string who, int percentualeTestSet, bool chineseMetho
         log << "Inizio fold: " << foldAttuale << std::endl;
         testSet.clear();
         tolti.clear();
+
         for (int i = 0; i < tempScelti.size(); ++i)
         {
             // cerco l'utente nel dataset
-            std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator got = vettoreUserReview.find (tempScelti[i]);
+            std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator got = hashTableUserReview.find (tempScelti[i]);
             
             // per ogni sua review (che sono sempre fisse)
-            std::unordered_map<std::string, double> vettoreReviewTestSet;
-            std::unordered_map<std::string, double> vettoreReviewTolti;
+            std::unordered_map<std::string, double> hashTableReviewTestSet;
+            std::unordered_map<std::string, double> hashTableReviewTolte;
             int foldSize = (int)((got->second).size()/5);
-            int j = 0;
+            int j = 0; //serve per scorrere le fold
 
             for ( auto it = (got->second).begin(); it != (got->second).end(); ++it )
             {
 
                 if (foldAttuale * foldSize <= j && j < (foldAttuale+1) * foldSize)
                 {
-                    // pusho su "vettoreReviewTolti"
-                    vettoreReviewTolti.insert({it->first, it->second});
+                    // pusho su "hashTableReviewTolte"
+                    hashTableReviewTolte.insert({it->first, it->second});
                 } else {
-                    // pusho su vettoreReviewTestSet
-                    vettoreReviewTestSet.insert({it->first, it->second});
+                    // pusho su hashTableReviewTestSet
+                    hashTableReviewTestSet.insert({it->first, it->second});
                 }
                 j++;
             }
-            testSet.insert({tempScelti[i], vettoreReviewTestSet});
-            tolti.insert({tempScelti[i], vettoreReviewTolti});
+            // tempScelti[i] è 'id dell'utente attuale
+            testSet.insert({tempScelti[i], hashTableReviewTestSet});
+            tolti.insert({tempScelti[i], hashTableReviewTolte});
         }
 
+        // controllo per sicurezza che non siano vuoti
         if (testSet.size() && tolti.size())
         {
-          if (chineseMethod)
+          if (metodoAlphaGeom)
           {
-            // odioTuttiCinesi(vettoreUserReview, testSet, tolti, A, log);
-            stoCreandoUnMostroMezzoCinese(vettoreUserReview, testSet, tolti, A, log);
+            // viene richiamata la funzione che, prima, come per la reccomenderRatingPredictionBased
+            //  calcolerà la rating prediction base ma poi le unirà rispetto ad un valore alpha
+            //  parametrico che segue una certa funzione dipendente dalla grandezza del test set
+            testAlphaParametrico(hashTableUserReview, testSet, tolti, A, log);
           } else {
-            odioTutti(vettoreUserReview, testSet, tolti, A, log);
+            // reccomender system basato su rating prediction
+            reccomenderRatingPredictionBased(hashTableUserReview, testSet, tolti, A, log);
             log << "Finita fold: " << foldAttuale << std::endl;
           }
         }
     }
 
+    // stampo sul file di log i risultati trovati
     log << "A\n";
     for (int i = 0; i < 6; ++i)
     {
