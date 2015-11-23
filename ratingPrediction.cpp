@@ -166,7 +166,7 @@ void calcoloRatingPrediction2(std::unordered_map<std::string, std::unordered_map
         // ----- ----- ----- ------- ----- 
         for(auto cosoTolto = (doveSono->second).begin(); cosoTolto != (doveSono->second).end(); ++cosoTolto)
         {
-            std::string ristF = *ristIt;
+            std::string ristF = cosoTolto->first;
             //---- BLOCCO USERBASED
             double sopra = 0, sotto = 0;
             std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator got = matrixSimilarityUser.find (utenteNelTestSet->first);

@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
         log << "percentualeTestSet: " << i << std::endl;
         log << "chineseMethod: " << chineseMethod << std::endl;
 
-        creazioneTestSet(who, i, 0, log); //!!!!!!!! ricordati che stai forzando il chinese
+        creazioneTestSet(who, i, 1, log); //!!!!!!!! ricordati che stai forzando il chinese
         time (&rawtime);
         log << std::endl << ctime (&rawtime) << std::endl << "-----------------------------------------------------------\n";  
     }

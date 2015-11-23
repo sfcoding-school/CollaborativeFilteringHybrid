@@ -13,7 +13,7 @@ double reccomender(std::unordered_map<std::string, std::unordered_map<std::strin
     std::unordered_map<std::string, std::vector<std::pair<std::string, double> > > iRaccomandati;
     if (true)
     {
-        //log << "reccomenderAlternativo!!!!!!!\n";
+        log << "reccomenderAlternativo!!!!!!!\n";
        for ( auto it = predizioniHybrid.begin(); it != predizioniHybrid.end(); ++it )
       {
           std::vector<std::pair<std::string, double> > v;

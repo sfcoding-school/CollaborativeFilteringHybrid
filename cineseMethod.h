@@ -11,6 +11,5 @@ void calcoloRatingPredictionCinese(std::unordered_map<std::string, std::unordere
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityUserCinese,
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityItem,
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &predizioniItem,
-                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti,
-                             std::set<std::string> &listaRistoranti
+                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti
     );

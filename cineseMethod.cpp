@@ -182,8 +182,7 @@ void calcoloRatingPredictionCinese(std::unordered_map<std::string, std::unordere
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityUserCinese,
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityItemCinese,
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &predizioniItemCinese,
-                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti,
-                             std::set<std::string> &listaRistoranti
+                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti
     ){
     // std::cout << "Inizio a calcolare rating prediction Cinese";
 
@@ -193,23 +192,11 @@ void calcoloRatingPredictionCinese(std::unordered_map<std::string, std::unordere
         std::unordered_map<std::string, double> predizioniItemBasedTemp;
         double media_u = calcolaMediaQ(utenteNelTestSet->second);
 
-          // tolgo i miei ristoranti
-        std::set<std::string> listaMieiRistoranti;
-        std::set<std::string> listaRistorantiDifference;
-        for ( auto ttt = (utenteNelTestSet->second).begin(); ttt != (utenteNelTestSet->second).end(); ++ttt )
-        {
-          listaMieiRistoranti.insert(ttt->first);
-        }
-
-        std::set_difference(listaRistoranti.begin(), listaRistoranti.end(), 
-                        listaMieiRistoranti.begin(), listaMieiRistoranti.end(), 
-                        std::inserter(listaRistorantiDifference, listaRistorantiDifference.begin()));
-
+          std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator doveSono = tolti.find (utenteNelTestSet->first);
         // ----- ----- ----- ------- ----- 
-        std::set<std::string>::iterator ristIt;
-        for (ristIt = std::begin(listaRistorantiDifference); ristIt != std::end(listaRistorantiDifference); ++ristIt)
+        for(auto cosoTolto = (doveSono->second).begin(); cosoTolto != (doveSono->second).end(); ++cosoTolto)
         {
-            std::string ristF = *ristIt;
+            std::string ristF = cosoTolto->first;
             //---- BLOCCO USERBASED
             double sopra = 0, sotto = 0;
             std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator got = matrixSimilarityUserCinese.find (utenteNelTestSet->first);

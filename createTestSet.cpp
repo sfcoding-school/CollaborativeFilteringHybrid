@@ -104,12 +104,12 @@ void odioTutti(std::unordered_map<std::string, std::unordered_map<std::string, d
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUser;
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItem;
 
-    bool ratingPredictionBase = true;
+    bool ratingPredictionBase = false;
     if (ratingPredictionBase)
     {
       log << "Inizio a calcolare calcoloRatingPrediction1";
       calcoloRatingPrediction(predizioniUser, predizioniItem, testSet, matrixSimilarityUser, 
-                              matrixSimilarityItem, tolti, listaRistoranti);
+                              matrixSimilarityItem, tolti);
       log << "\tFinito\n";
     } else {
       //double mu = overallAverageRating(vettoreUserReview);
@@ -169,7 +169,7 @@ void odioTuttiCinesi(std::unordered_map<std::string, std::unordered_map<std::str
         std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUserCinese;
         std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItemCinese;
         calcoloRatingPredictionCinese(predizioniUserCinese, testSet, matrixSimilarityUserCinese, 
-                                            matrixSimilarityItemCinese, predizioniItemCinese, tolti, listaRistoranti);
+                                            matrixSimilarityItemCinese, predizioniItemCinese, tolti);
         log << "Ho finito calcoloRatingPredictionCinese\n";
 
         std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybridCinese;
@@ -192,9 +192,9 @@ void stoCreandoUnMostroMezzoCinese(std::unordered_map<std::string, std::unordere
 
   //------------------------------------------
   std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityUser;
-    log << "Inizio a creare MatrixSimilarityUser";
+    // log << "Inizio a creare MatrixSimilarityUser";
     creazioneMatriceUser(testSet, vettoreUserReview, matrixSimilarityUser);
-    log << "\tFinito\n";
+    // log << "\tFinito\n";
 
     std::set<std::string> listaRistoranti;
     for ( auto it = testSet.begin(); it != testSet.end(); ++it )
@@ -211,12 +211,12 @@ void stoCreandoUnMostroMezzoCinese(std::unordered_map<std::string, std::unordere
         listaRistoranti.insert(it2->first);
       }
     }
-    log << "Creata listaRistoranti: " << listaRistoranti.size() << "\n";
+    // log << "Creata listaRistoranti: " << listaRistoranti.size() << "\n";
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItem;
-    log << "Inizio a creare MatrixSimilarityItem";
+    // log << "Inizio a creare MatrixSimilarityItem";
     creazioneMatriceItem(testSet, matrixSimilarityItem, listaRistoranti);
-    log << "\tFinito\n";
+    // log << "\tFinito\n";
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUser;
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItem;
@@ -224,16 +224,16 @@ void stoCreandoUnMostroMezzoCinese(std::unordered_map<std::string, std::unordere
     bool ratingPredictionBase = false;
     if (ratingPredictionBase)
     {
-      log << "Inizio a calcolare calcoloRatingPrediction1";
+      // log << "Inizio a calcolare calcoloRatingPrediction1";
       calcoloRatingPrediction(predizioniUser, predizioniItem, testSet, matrixSimilarityUser, 
-                              matrixSimilarityItem, tolti, listaRistoranti);
-      log << "\tFinito\n";
+                              matrixSimilarityItem, tolti);
+      // log << "\tFinito\n";
     } else {
       //double mu = overallAverageRating(vettoreUserReview);
-      log << "Inizio a calcolare calcoloRatingPrediction2";// (mu= " << mu << " )";
+      // log << "Inizio a calcolare calcoloRatingPrediction2";// (mu= " << mu << " )";
       calcoloRatingPrediction2(predizioniUser, predizioniItem, testSet, matrixSimilarityUser, 
                               matrixSimilarityItem, tolti, listaRistoranti, 0);
-      log << "\tFinito\n";
+      // log << "\tFinito\n";
     }
     
 
@@ -246,21 +246,21 @@ void stoCreandoUnMostroMezzoCinese(std::unordered_map<std::string, std::unordere
         std::unordered_map<std::string, std::tuple<double, double, double> > matriceVettoreCineseUser;
         std::unordered_map<std::string, std::tuple<double, double, double> > matriceVettoreCineseItem;
         creazioneVettoreCinese(testSet, matriceVettoreCineseUser, matriceVettoreCineseItem, listaRistoranti);
-        log << "Ho finito di calcolare matriceVettoreCineseUser\n";
+        // log << "Ho finito di calcolare matriceVettoreCineseUser\n";
 
         std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityUserCinese;
         creazioneMatrixSimilarityCinese(matriceVettoreCineseUser, matrixSimilarityUserCinese);
-        log << "Ho finito di calcolare matrixSimilarityUserCinese\n";
+        // log << "Ho finito di calcolare matrixSimilarityUserCinese\n";
 
         std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItemCinese;
         creazioneMatrixSimilarityCinese(matriceVettoreCineseItem, matrixSimilarityItemCinese);
-        log << "Ho finito di calcolare matrixSimilarityItemCinese\n";
+        // log << "Ho finito di calcolare matrixSimilarityItemCinese\n";
 
         std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUserCinese;
         std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItemCinese;
         calcoloRatingPredictionCinese(predizioniUserCinese, testSet, matrixSimilarityUserCinese, 
-                                            matrixSimilarityItemCinese, predizioniItemCinese, tolti, listaRistoranti);
-        log << "Ho finito calcoloRatingPredictionCinese\n";
+                                            matrixSimilarityItemCinese, predizioniItemCinese, tolti);
+        // log << "Ho finito calcoloRatingPredictionCinese\n";
 
         std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybridCinese;
         
@@ -268,75 +268,20 @@ void stoCreandoUnMostroMezzoCinese(std::unordered_map<std::string, std::unordere
         //--------------------------------------------------------------
         std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybridHybrid;
 
-        ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, 0);
-        ratingPredictionHybrid(predizioniUserCinese, predizioniItemCinese, predizioniHybridCinese, 0.2);
-        ratingPredictionHybrid(predizioniHybrid, predizioniHybridCinese, predizioniHybridHybrid, 0.6);
-        calcolaQuantoSeiAndatoMale(predizioniHybridHybrid, tolti, log);
-        A[0] += reccomender(predizioniHybridHybrid, tolti, log);
+        double alpha =((double)testSet.size()/100);
+        double gamma = std::pow( 0.5 , alpha/10 );
 
-        predizioniHybrid.clear();
-        predizioniHybridCinese.clear();
-        predizioniHybridHybrid.clear();
-
-        ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, 0.2);
-        ratingPredictionHybrid(predizioniUserCinese, predizioniItemCinese, predizioniHybridCinese, 0.4);
-        ratingPredictionHybrid(predizioniHybrid, predizioniHybridCinese, predizioniHybridHybrid, 0.8);
-        calcolaQuantoSeiAndatoMale(predizioniHybridHybrid, tolti, log);
-        A[1] += reccomender(predizioniHybridHybrid, tolti, log);
-
-        predizioniHybrid.clear();
-        predizioniHybridCinese.clear();
-        predizioniHybridHybrid.clear();
-
-        double alpha =((double)testSet.size()/1000);
-        double exp = ((double)listaRistoranti.size()/1000);
-        double gamma = std::pow( 0.25 , exp );
-
-        log << "testSet " << testSet.size() << " listaRistoranti " << listaRistoranti.size() << std::endl;
-        log << "alpha " << alpha << " gamma " << gamma << " exp " << exp << std::endl;
-
-        ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, alpha*10);
-        ratingPredictionHybrid(predizioniUserCinese, predizioniItemCinese, predizioniHybridCinese, 0.2 * alpha);
-        ratingPredictionHybrid(predizioniHybrid, predizioniHybridCinese, predizioniHybridHybrid, gamma);
-        A[4] += reccomender(predizioniHybridHybrid, tolti, log);
-        /////////////////////////////////////////////////////////////////////////////////////////////
-        predizioniHybrid.clear();
-        predizioniHybridCinese.clear();
-        predizioniHybridHybrid.clear();
-
-        gamma = std::pow( 0.5 , exp );
-
-        log << "testSet " << testSet.size() << " listaRistoranti " << listaRistoranti.size() << std::endl;
-        log << "alpha " << alpha << " gamma " << gamma << " exp " << exp << std::endl;
-
-        ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, alpha*10);
-        ratingPredictionHybrid(predizioniUserCinese, predizioniItemCinese, predizioniHybridCinese, 0.2 * alpha);
-        ratingPredictionHybrid(predizioniHybrid, predizioniHybridCinese, predizioniHybridHybrid, gamma);
-        A[3] += reccomender(predizioniHybridHybrid, tolti, log);
-        // /////////////////////////////////////////////////////////////////////////////////////////////
-        //  predizioniHybrid.clear();
-        // predizioniHybridCinese.clear();
-        // predizioniHybridHybrid.clear();
-
-        // ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, 1-gamma);
-        // ratingPredictionHybrid(predizioniUserCinese, predizioniItemCinese, predizioniHybridCinese, 0.4);
-        // ratingPredictionHybrid(predizioniHybrid, predizioniHybridCinese, predizioniHybridHybrid, gamma);
-        // calcolaQuantoSeiAndatoMale(predizioniHybridHybrid, tolti, log);
-        // A[2] += reccomender(predizioniHybridHybrid, tolti, log);
-        // ///////////////////////////////////////////////////////////////////////////////////////////
+        
+////////////////////////////////
         predizioniHybrid.clear();
         predizioniHybridCinese.clear();
         predizioniHybridHybrid.clear();
 
 
-        exp = ((double)testSet.size()/100);
-        gamma = 1 - std::pow( (0.5) , exp + 1 );
+        ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, 1 - (gamma/10));
+        A[2] += reccomender(predizioniHybrid, tolti, log);
 
-        ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, 1-gamma);
-        ratingPredictionHybrid(predizioniUserCinese, predizioniItemCinese, predizioniHybridCinese, 0.2 * alpha);
-        ratingPredictionHybrid(predizioniHybrid, predizioniHybridCinese, predizioniHybridHybrid, gamma);
-        calcolaQuantoSeiAndatoMale(predizioniHybridHybrid, tolti, log);
-        A[5] += reccomender(predizioniHybridHybrid, tolti, log);
+       
 }
 
 // -------------------------------------------------------------------------------------
@@ -400,7 +345,7 @@ void creazioneTestSet(std::string who, int percentualeTestSet, bool chineseMetho
         {
           if (chineseMethod)
           {
-            //odioTuttiCinesi(vettoreUserReview, testSet, tolti, A, log);
+            // odioTuttiCinesi(vettoreUserReview, testSet, tolti, A, log);
             stoCreandoUnMostroMezzoCinese(vettoreUserReview, testSet, tolti, A, log);
           } else {
             odioTutti(vettoreUserReview, testSet, tolti, A, log);
