@@ -98,6 +98,7 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
         for(auto cosoTolto = (doveSono->second).begin(); cosoTolto != (doveSono->second).end(); ++cosoTolto)
         {
             std::string bussF = cosoTolto->first;
+            //--------------------------------------------------------------------------
             //---- BLOCCO USERBASED
             double sopra = 0, sotto = 0;
             std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator got = matrixSimilarityUser.find (utenteNelTestSet->first);
@@ -123,7 +124,7 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
                   predizioniUserBasedTemp.insert({bussF, p_u_i});
                 }
             }
-
+            //--------------------------------------------------------------------------
             //---- BLOCCO ITEMBASED
             double sopraI = 0, sottoI = 0;
             got = matrixSimilarityItem.find (bussF);
