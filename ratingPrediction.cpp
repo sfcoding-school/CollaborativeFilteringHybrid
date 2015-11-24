@@ -92,12 +92,12 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
         std::unordered_map<std::string, double> predizioniItemBasedTemp;
         double media_u = calcolaMedia(utenteNelTestSet->second);
 
-        // tolgo i miei ristoranti
+        // tolgo i miei bussiness
         std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator doveSono = tolti.find (utenteNelTestSet->first);
 
         for(auto cosoTolto = (doveSono->second).begin(); cosoTolto != (doveSono->second).end(); ++cosoTolto)
         {
-            std::string ristF = cosoTolto->first;
+            std::string bussF = cosoTolto->first;
             //---- BLOCCO USERBASED
             double sopra = 0, sotto = 0;
             std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator got = matrixSimilarityUser.find (utenteNelTestSet->first);
@@ -106,7 +106,7 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
                 {
                     std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator mioSimileNelTestSet = testSet.find (mioSimile->first);
                     if ( mioSimileNelTestSet != testSet.end() ){
-                        std::unordered_map<std::string, double>::const_iterator laSuaReview = (mioSimileNelTestSet->second).find (ristF);
+                        std::unordered_map<std::string, double>::const_iterator laSuaReview = (mioSimileNelTestSet->second).find (bussF);
                         if ( laSuaReview != (mioSimileNelTestSet->second).end() ){
                             double simil = mioSimile->second;
                             double laSuaMedia = calcolaMedia(mioSimileNelTestSet->second);
@@ -120,21 +120,21 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
                 if (sotto != 0 &&  sopra != 0)
                 {
                   p_u_i = media_u + standardDeviation(utenteNelTestSet->second, media_u, ratPred2) * (sopra/sotto);
-                  predizioniUserBasedTemp.insert({ristF, p_u_i});
+                  predizioniUserBasedTemp.insert({bussF, p_u_i});
                 }
             }
 
             //---- BLOCCO ITEMBASED
             double sopraI = 0, sottoI = 0;
-            got = matrixSimilarityItem.find (ristF);
+            got = matrixSimilarityItem.find (bussF);
             if ( got != matrixSimilarityItem.end() ){
                 for ( auto mioSimile = (got->second).begin(); mioSimile != (got->second).end(); ++mioSimile )
                 {
-                    std::unordered_map<std::string, double>::const_iterator ilMioVotoSuQuelRistorante = (utenteNelTestSet->second).find (mioSimile->first);
-                    if (ilMioVotoSuQuelRistorante != (utenteNelTestSet->second).end())
+                    std::unordered_map<std::string, double>::const_iterator ilMioVotoSuQuelBussiness = (utenteNelTestSet->second).find (mioSimile->first);
+                    if (ilMioVotoSuQuelBussiness != (utenteNelTestSet->second).end())
                     {
                         double simil = mioSimile->second;
-                        sopraI += simil * (ilMioVotoSuQuelRistorante->second) ;
+                        sopraI += simil * (ilMioVotoSuQuelBussiness->second) ;
                         sottoI += std::abs(simil);
                     }
                 }
@@ -144,7 +144,7 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
             if (sottoI != 0 &&  sopraI != 0)
             {
                 p_u_i = (sopraI/sottoI);
-                predizioniItemBasedTemp.insert({ristF, p_u_i});
+                predizioniItemBasedTemp.insert({bussF, p_u_i});
             }
         }
         predizioniItem.insert({utenteNelTestSet->first, predizioniItemBasedTemp});

@@ -10,6 +10,9 @@
 #include <iterator>
 #include <unordered_map>
 
+// implementazione della cosine similarity
+//  ogni coppia è un unico bussiness (di cui qui non mi serve sapere quale)
+//  e la coppia sarà il voto dei due utenti in esame su quel bussiness
 double cosineSimilarity(std::vector< std::pair<int, int> > & vettoreComune){
     double sotto_l = 0, sotto_r = 0, sopra = 0;
     for (int i = 0; i < vettoreComune.size(); ++i)
@@ -23,48 +26,52 @@ double cosineSimilarity(std::vector< std::pair<int, int> > & vettoreComune){
     return (sopra)/((double)(std::sqrt(sotto_l)) * (std::sqrt(sotto_r)));
 }
 
-double calcoloSimilaritaItem(std::string rist_i, std::string rist_j, 
+// questo metodo ha la funzione di trovari i bussiness in comune, creare il vettore di coppie
+//  da passare alla funzione cosineSimilarity e infine tornare tale valore
+double calcoloSimilaritaItem(std::string buss_i, std::string buss_j, 
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet)
 { 
-  std::vector< std::pair<int, int> > vettoriVotiRistorantiInComune;
+  std::vector< std::pair<int, int> > vettoreBussinessInComune;
   for ( auto it = testSet.begin(); it != testSet.end(); ++it )
   {
     int voto1 = 0, voto2 = 0; 
-    std::unordered_map<std::string, double>::const_iterator got = (it->second).find (rist_i);
-    std::unordered_map<std::string, double>::const_iterator got2 = (it->second).find (rist_j);
+    std::unordered_map<std::string, double>::const_iterator got = (it->second).find (buss_i);
+    std::unordered_map<std::string, double>::const_iterator got2 = (it->second).find (buss_j);
 
     if ( got != (it->second).end() && got2 != (it->second).end() )
     {
       voto1 = got->second;
       voto2 = got2->second;
-      vettoriVotiRistorantiInComune.push_back({voto1, voto2});
+      vettoreBussinessInComune.push_back({voto1, voto2});
     }
   }
 
-  if(!vettoriVotiRistorantiInComune.size()){
-    return -99;
+  if(!vettoreBussinessInComune.size()){
+    return -99; // solito flag
   }
 
-  return cosineSimilarity(vettoriVotiRistorantiInComune);
+  return cosineSimilarity(vettoreBussinessInComune);
 }
 
+// questa è la funzione principale che viene richiamata
+//  la sua unica funzione è scorrere tutti i bussiness, richiamare per ognuno il metodo
+//  calcoloSimilaritaItem e se non si attiva il flag lo inserisci tra i simili
 void creazioneMatriceItem(std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
                           std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityItem,
-                          std::set<std::string> &listaRistoranti)
+                          std::set<std::string> &listaBussiness)
 {
-    for(auto rist_i : listaRistoranti) {
+    for(auto buss_i : listaBussiness) {
       std::unordered_map<std::string, double> hashTableMieiSimili;
-      for(auto rist_j : listaRistoranti) {
-        if (rist_j != "" && rist_i != rist_j)
+      for(auto buss_j : listaBussiness) {
+        if (buss_j != "" && buss_i != buss_j)
         {
-          double cosine_i_j = calcoloSimilaritaItem(rist_i, rist_j, testSet);
-          
+          double cosine_i_j = calcoloSimilaritaItem(buss_i, buss_j, testSet);
           if ( cosine_i_j != -99)
           {
-              hashTableMieiSimili.insert({rist_j, cosine_i_j});
+            hashTableMieiSimili.insert({buss_j, cosine_i_j});
           }
         }
       }
-      matrixSimilarityItem.insert({rist_i, hashTableMieiSimili});
+      matrixSimilarityItem.insert({buss_i, hashTableMieiSimili});
     } 
 }

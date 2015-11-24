@@ -83,26 +83,26 @@ void reccomenderRatingPredictionBased(std::unordered_map<std::string, std::unord
     creazioneMatriceUser(testSet, hashTableUserReview, matrixSimilarityUser);
     log << "\tFinito\n";
 
-    std::set<std::string> listaRistoranti;
+    std::set<std::string> listaBussiness;
     for ( auto it = testSet.begin(); it != testSet.end(); ++it )
     {
       for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
       {
-        listaRistoranti.insert(it2->first);
+        listaBussiness.insert(it2->first);
       }
     }
     for ( auto it = tolti.begin(); it != tolti.end(); ++it )
     {
       for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
       {
-        listaRistoranti.insert(it2->first);
+        listaBussiness.insert(it2->first);
       }
     }
-    log << "Creata listaRistoranti: " << listaRistoranti.size() << "\n";
+    log << "Creata listaBussiness: " << listaBussiness.size() << "\n";
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItem;
     log << "Inizio a creare MatrixSimilarityItem";
-    creazioneMatriceItem(testSet, matrixSimilarityItem, listaRistoranti);
+    creazioneMatriceItem(testSet, matrixSimilarityItem, listaBussiness);
     log << "\tFinito\n";
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUser;
@@ -135,24 +135,24 @@ void testAlphaParametrico(std::unordered_map<std::string, std::unordered_map<std
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityUser;
     creazioneMatriceUser(testSet, hashTableUserReview, matrixSimilarityUser);
 
-    std::set<std::string> listaRistoranti;
+    std::set<std::string> listaBussiness;
     for ( auto it = testSet.begin(); it != testSet.end(); ++it )
     {
         for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
         {
-            listaRistoranti.insert(it2->first);
+            listaBussiness.insert(it2->first);
         }
     }
     for ( auto it = tolti.begin(); it != tolti.end(); ++it )
     {
         for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
         {
-            listaRistoranti.insert(it2->first);
+            listaBussiness.insert(it2->first);
         }
     }
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItem;
-    creazioneMatriceItem(testSet, matrixSimilarityItem, listaRistoranti);
+    creazioneMatriceItem(testSet, matrixSimilarityItem, listaBussiness);
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUser;
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItem;
 

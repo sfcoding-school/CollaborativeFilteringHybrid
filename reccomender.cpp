@@ -12,8 +12,10 @@ double reccomender(std::unordered_map<std::string, std::unordered_map<std::strin
     ){
 
     std::unordered_map<std::string, std::vector<std::pair<std::string, double> > > iRaccomandati;
-    bool estrazioneDiversa = false;
 
+    // estrazione diversa ha il compito di estrarre non i primi (rispetto al voto) 5 tra i tolti
+    //  ma tutti quelli con voto alto uguale purchè siano almeno 5
+    bool estrazioneDiversa = false;
     if (estrazioneDiversa)
     {
         log << "reccomenderAlternativo!!!!!!!\n";
@@ -36,12 +38,16 @@ double reccomender(std::unordered_map<std::string, std::unordered_map<std::strin
             iRaccomandati.insert({it->first, v2});
         }
     } else {
+        // estraggo i primi 5 una volta ordinato il tutto
         for ( auto it = predizioniHybrid.begin(); it != predizioniHybrid.end(); ++it )
         {
             std::vector<std::pair<std::string, double> > v;
             for ( auto predizioni = (it->second).begin(); predizioni != (it->second).end(); ++predizioni )
             {
                 v.push_back({predizioni->first, predizioni->second});
+                // lavoro sulla grandezza del vettore v (fissata a 5)
+                //  solo se la sua size è maggiore di 5 allora ordino e faccio il pop (estraggo l'ultimo)
+                //  in questo modo si ha: n·5·log(5) invece che n + n log(n) + 5
                 if (v.size() > 5)
                 {
                     if (v.size() > 5)
@@ -57,6 +63,9 @@ double reccomender(std::unordered_map<std::string, std::unordered_map<std::strin
         }
     }
 
+    // estraggo i primi 5, solo questi verranno controllati per sapere se ho "consigliato"
+    //  il giusto, in questo caso si è obbligati ad estrarre tutti i bussiness con voto
+    //  maggiore, purchè siano almeno 5
     std::unordered_map<std::string, std::vector<std::pair<std::string, int> > > iToltiDaControllare;
     for ( auto it = tolti.begin(); it != tolti.end(); ++it )
     {
@@ -77,6 +86,19 @@ double reccomender(std::unordered_map<std::string, std::unordered_map<std::strin
         iToltiDaControllare.insert({it->first, quelliDaControllare});
     }
 
+    // qui si controllano i TP e i FP
+    //  fissato un utente lo si cerca nel hashTable iToltiDaControllare
+    //  vengono poi creati due vettori di stringhe con solo i nomi dei bussiness, quelli tolti
+    //  e quelli consigliati (oramai del voto ci interessa poco) (fissiamo tali grandezze n_1 e n_2)
+    //  vengono poi creati altri due vettori (v1, v2) che dovranno essere esattamente della grandezza del 
+    //  più grande dei 2, questo perchè con la modifica non possiamo assumere i vettori di lunghezza 
+    //  fissata 5. Da qui si ordinano entrambi (il cui costo sarà ridotto a poichè "n_i log(n_i)" con n_i numero
+    //  piccolo non ci preoccupa).
+    //  Ora si fa l'intersezione e la differenza (insiemisticamente parlando) tra i 2 originali 
+    //  usando v_1 e v_2 come contenitori del risultato
+    //  ovviamente la grandezza dell'intersezione saranno i TP e quella della differenza i FP
+    //  NB: .resize(...) è utile poichè il vettore si "sporca", guardare documentazione ufficiale per
+    //      ulteriori chiarimenti
     int good = 0, bad = 0;
     for ( auto it = iRaccomandati.begin(); it != iRaccomandati.end(); ++it )
     {
