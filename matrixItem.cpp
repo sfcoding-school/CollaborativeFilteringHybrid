@@ -26,7 +26,7 @@ double cosineSimilarity(std::vector< std::pair<int, int> > & vettoreComune){
     return (sopra)/((double)(std::sqrt(sotto_l)) * (std::sqrt(sotto_r)));
 }
 
-// questo metodo ha la funzione di trovari i bussiness in comune, creare il vettore di coppie
+// questo metodo ha la funzione di trovare i bussiness in comune, creare il vettore di coppie
 //  da passare alla funzione cosineSimilarity e infine tornare tale valore
 double calcoloSimilaritaItem(std::string buss_i, std::string buss_j, 
                              std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet)

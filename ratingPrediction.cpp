@@ -95,9 +95,9 @@ void calcoloRatingPrediction(std::unordered_map<std::string, std::unordered_map<
         // tolgo i miei bussiness
         std::unordered_map<std::string, std::unordered_map<std::string, double> >::const_iterator doveSono = tolti.find (utenteNelTestSet->first);
 
-        for(auto cosoTolto = (doveSono->second).begin(); cosoTolto != (doveSono->second).end(); ++cosoTolto)
+        for(auto bussinessTolto = (doveSono->second).begin(); bussinessTolto != (doveSono->second).end(); ++bussinessTolto)
         {
-            std::string bussF = cosoTolto->first;
+            std::string bussF = bussinessTolto->first;
             //--------------------------------------------------------------------------
             //---- BLOCCO USERBASED
             double sopra = 0, sotto = 0;

@@ -84,20 +84,14 @@ void reccomenderRatingPredictionBased(std::unordered_map<std::string, std::unord
     log << "\tFinito\n";
 
     std::set<std::string> listaBussiness;
-    for ( auto it = testSet.begin(); it != testSet.end(); ++it )
+    for ( auto it = hashTableUserReview.begin(); it != hashTableUserReview.end(); ++it )
     {
       for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
       {
         listaBussiness.insert(it2->first);
       }
     }
-    for ( auto it = tolti.begin(); it != tolti.end(); ++it )
-    {
-      for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
-      {
-        listaBussiness.insert(it2->first);
-      }
-    }
+
     log << "Creata listaBussiness: " << listaBussiness.size() << "\n";
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItem;
@@ -121,12 +115,14 @@ void reccomenderRatingPredictionBased(std::unordered_map<std::string, std::unord
     {
         log << "alpha: " << i;
         ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, i);
-        calcolaQuantoSeiAndatoMale(predizioniHybrid, tolti, log);
+        // calcolaQuantoSeiAndatoMale(predizioniHybrid, tolti, log);
         A[(int)(i*5)] += reccomender(predizioniHybrid, tolti, log);
         predizioniHybrid.clear();
     }
 }
 
+// questa funzione è praticamente come quella sopra ma calcola la rating prediction ibrida con la
+//  formula inventata basata sulla grandezza del test set
 void testAlphaParametrico(std::unordered_map<std::string, std::unordered_map<std::string, double> > &hashTableUserReview,
                std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
                std::unordered_map<std::string, std::unordered_map<std::string, double> > &tolti,
@@ -136,19 +132,12 @@ void testAlphaParametrico(std::unordered_map<std::string, std::unordered_map<std
     creazioneMatriceUser(testSet, hashTableUserReview, matrixSimilarityUser);
 
     std::set<std::string> listaBussiness;
-    for ( auto it = testSet.begin(); it != testSet.end(); ++it )
+    for ( auto it = hashTableUserReview.begin(); it != hashTableUserReview.end(); ++it )
     {
-        for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
-        {
-            listaBussiness.insert(it2->first);
-        }
-    }
-    for ( auto it = tolti.begin(); it != tolti.end(); ++it )
-    {
-        for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
-        {
-            listaBussiness.insert(it2->first);
-        }
+      for ( auto it2 = (it->second).begin(); it2 != (it->second).end(); ++it2 )
+      {
+        listaBussiness.insert(it2->first);
+      }
     }
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItem;
@@ -163,7 +152,7 @@ void testAlphaParametrico(std::unordered_map<std::string, std::unordered_map<std
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybrid;
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniHybridHybrid;
 
-    double gamma = std::pow( 0.5 , ((double)testSet.size()/100)/10 );
+    double gamma = std::pow( 0.5, ((double)testSet.size()/100)/10 );
 
     ratingPredictionHybrid(predizioniUser, predizioniItem, predizioniHybrid, 1 - (gamma/10));
     A[0] += reccomender(predizioniHybrid, tolti, log);    
