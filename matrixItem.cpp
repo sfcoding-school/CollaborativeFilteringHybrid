@@ -29,10 +29,10 @@ double cosineSimilarity(std::vector< std::pair<int, int> > & vettoreComune){
 // questo metodo ha la funzione di trovare i bussiness in comune, creare il vettore di coppie
 //  da passare alla funzione cosineSimilarity e infine tornare tale valore
 double calcoloSimilaritaItem(std::string buss_i, std::string buss_j, 
-                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet)
+                             std::unordered_map<std::string, std::unordered_map<std::string, double> > &hashTableUserReview)
 { 
   std::vector< std::pair<int, int> > vettoreBussinessInComune;
-  for ( auto it = testSet.begin(); it != testSet.end(); ++it )
+  for ( auto it = hashTableUserReview.begin(); it != hashTableUserReview.end(); ++it )
   {
     int voto1 = 0, voto2 = 0; 
     std::unordered_map<std::string, double>::const_iterator got = (it->second).find (buss_i);
@@ -56,7 +56,7 @@ double calcoloSimilaritaItem(std::string buss_i, std::string buss_j,
 // questa è la funzione principale che viene richiamata
 //  la sua unica funzione è scorrere tutti i bussiness, richiamare per ognuno il metodo
 //  calcoloSimilaritaItem e se non si attiva il flag lo inserisci tra i simili
-void creazioneMatriceItem(std::unordered_map<std::string, std::unordered_map<std::string, double> > &testSet,
+void creazioneMatriceItem(std::unordered_map<std::string, std::unordered_map<std::string, double> > &hashTableUserReview,
                           std::unordered_map<std::string, std::unordered_map<std::string, double> > &matrixSimilarityItem,
                           std::set<std::string> &listaBussiness)
 {
@@ -65,7 +65,7 @@ void creazioneMatriceItem(std::unordered_map<std::string, std::unordered_map<std
       for(auto buss_j : listaBussiness) {
         if (buss_j != "" && buss_i != buss_j)
         {
-          double cosine_i_j = calcoloSimilaritaItem(buss_i, buss_j, testSet);
+          double cosine_i_j = calcoloSimilaritaItem(buss_i, buss_j, hashTableUserReview);
           if ( cosine_i_j != -99)
           {
             hashTableMieiSimili.insert({buss_j, cosine_i_j});

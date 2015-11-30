@@ -96,7 +96,7 @@ void reccomenderRatingPredictionBased(std::unordered_map<std::string, std::unord
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItem;
     log << "Inizio a creare MatrixSimilarityItem";
-    creazioneMatriceItem(testSet, matrixSimilarityItem, listaBussiness);
+    creazioneMatriceItem(hashTableUserReview, matrixSimilarityItem, listaBussiness);
     log << "\tFinito\n";
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUser;
@@ -141,7 +141,7 @@ void testAlphaParametrico(std::unordered_map<std::string, std::unordered_map<std
     }
 
     std::unordered_map<std::string, std::unordered_map<std::string, double> > matrixSimilarityItem;
-    creazioneMatriceItem(testSet, matrixSimilarityItem, listaBussiness);
+    creazioneMatriceItem(hashTableUserReview, matrixSimilarityItem, listaBussiness);
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniUser;
     std::unordered_map<std::string, std::unordered_map<std::string, double> > predizioniItem;
 
